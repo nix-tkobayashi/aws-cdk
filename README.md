@@ -7,6 +7,9 @@ aws-cdk workshop by myself.
 ## CDK Reference.
 - https://docs.aws.amazon.com/cdk/api/latest/versions.html
 
+## CDK Developers Guide.
+- https://docs.aws.amazon.com/cdk/latest/guide/home.html
+
 ## aws/aws-cdk
 - https://github.com/aws/aws-cdk
 
