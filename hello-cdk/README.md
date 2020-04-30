@@ -1,6 +1,10 @@
 # aws-cdk
 aws-cdk workshop by myself
 
+## Teacher.
+- https://dev.classmethod.jp/articles/aws-cdk-ga-serverless-application/
+
+
 ## 1. create app stack.
 ```
 cdk init app --language=typescript

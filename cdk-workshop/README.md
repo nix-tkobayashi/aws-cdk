@@ -1,7 +1,11 @@
 # aws-cdk
 aws-cdk workshop by myself.
 
-Teacher by https://cdkworkshop.com/20-typescript.html
+## Using lib.
+- https://www.npmjs.com/package/cdk-dynamo-table-viewer
+
+## Teacher.
+- https://cdkworkshop.com/20-typescript.html
 
 ```
 ├── bin
