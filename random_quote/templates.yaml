@@ -1,0 +1,458 @@
+Resources:
+  randomQuoteServiceRole0FCB0944:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuote/ServiceRole/Resource
+  randomQuote6C0275DF:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersb2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767S3Bucket33D8A8F8
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersb2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767S3VersionKey9F1820B7
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersb2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767S3VersionKey9F1820B7
+      Handler: random_quote.handler
+      Role:
+        Fn::GetAtt:
+          - randomQuoteServiceRole0FCB0944
+          - Arn
+      Runtime: nodejs12.x
+    DependsOn:
+      - randomQuoteServiceRole0FCB0944
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuote/Resource
+      aws:asset:path: asset.b2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767
+      aws:asset:property: Code
+  randomQuoteApiA31FF805:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: randomQuoteApi
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Resource
+  randomQuoteApiCloudWatchRole8C3FC355:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/CloudWatchRole/Resource
+  randomQuoteApiAccountCFDB57E5:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn:
+        Fn::GetAtt:
+          - randomQuoteApiCloudWatchRole8C3FC355
+          - Arn
+    DependsOn:
+      - randomQuoteApiA31FF805
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Account
+  randomQuoteApiDeploymentC0C92E65cd72a32ebacd2f29bd7991459576302c:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      Description: Automatically created by the RestApi construct
+    DependsOn:
+      - randomQuoteApiOPTIONS2AD897B5
+      - randomQuoteApiquoteGETD2A230A8
+      - randomQuoteApiquoteOPTIONS4A44F265
+      - randomQuoteApiquotePOST0920C0C6
+      - randomQuoteApiquoteFDDA45C4
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Deployment/Resource
+  randomQuoteApiDeploymentStageprod8C60D65A:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      DeploymentId:
+        Ref: randomQuoteApiDeploymentC0C92E65cd72a32ebacd2f29bd7991459576302c
+      StageName: prod
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/DeploymentStage.prod/Resource
+  randomQuoteApiquoteFDDA45C4:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - randomQuoteApiA31FF805
+          - RootResourceId
+      PathPart: quote
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/Resource
+  randomQuoteApiquoteGETApiPermissionRandomQuoteStackrandomQuoteApiB7710B03GETquote9CD8120C:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - randomQuote6C0275DF
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: randomQuoteApiA31FF805
+            - /
+            - Ref: randomQuoteApiDeploymentStageprod8C60D65A
+            - /GET/quote
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/GET/ApiPermission.RandomQuoteStackrandomQuoteApiB7710B03.GET..quote
+  randomQuoteApiquoteGETApiPermissionTestRandomQuoteStackrandomQuoteApiB7710B03GETquote64D3C569:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - randomQuote6C0275DF
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: randomQuoteApiA31FF805
+            - /test-invoke-stage/GET/quote
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/GET/ApiPermission.Test.RandomQuoteStackrandomQuoteApiB7710B03.GET..quote
+  randomQuoteApiquoteGETD2A230A8:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      ResourceId:
+        Ref: randomQuoteApiquoteFDDA45C4
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId:
+        Ref: cognitoauthorizer
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - ":apigateway:"
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - randomQuote6C0275DF
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/GET/Resource
+  randomQuoteApiquotePOSTApiPermissionRandomQuoteStackrandomQuoteApiB7710B03POSTquote81A78536:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - randomQuote6C0275DF
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: randomQuoteApiA31FF805
+            - /
+            - Ref: randomQuoteApiDeploymentStageprod8C60D65A
+            - /POST/quote
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/POST/ApiPermission.RandomQuoteStackrandomQuoteApiB7710B03.POST..quote
+  randomQuoteApiquotePOSTApiPermissionTestRandomQuoteStackrandomQuoteApiB7710B03POSTquote03B8E26B:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - randomQuote6C0275DF
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: randomQuoteApiA31FF805
+            - /test-invoke-stage/POST/quote
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/POST/ApiPermission.Test.RandomQuoteStackrandomQuoteApiB7710B03.POST..quote
+  randomQuoteApiquotePOST0920C0C6:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      ResourceId:
+        Ref: randomQuoteApiquoteFDDA45C4
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId:
+        Ref: cognitoauthorizer
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - ":apigateway:"
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - randomQuote6C0275DF
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/POST/Resource
+  randomQuoteApiquoteOPTIONS4A44F265:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: OPTIONS
+      ResourceId:
+        Ref: randomQuoteApiquoteFDDA45C4
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      AuthorizationType: NONE
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Credentials: "'false'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE'"
+            StatusCode: "200"
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/quote/OPTIONS/Resource
+  randomQuoteApiOPTIONS2AD897B5:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: OPTIONS
+      ResourceId:
+        Fn::GetAtt:
+          - randomQuoteApiA31FF805
+          - RootResourceId
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      AuthorizationType: NONE
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Credentials: "'false'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE'"
+            StatusCode: "200"
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/randomQuoteApi/Default/OPTIONS/Resource
+  randomquoteuserpool7D1703F8:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/random_quote_user_pool/random_quote_user_pool
+  randomquoteuserpoolrandomquoteuserpoolclient5A47510D:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId:
+        Ref: randomquoteuserpool7D1703F8
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/random_quote_user_pool/random_quote_user_poolclient
+  cognitoauthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      RestApiId:
+        Ref: randomQuoteApiA31FF805
+      Type: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
+      Name: random_quote_user_pool_cognito_authorizer
+      ProviderARNs:
+        - Fn::GetAtt:
+            - randomquoteuserpool7D1703F8
+            - Arn
+    Metadata:
+      aws:cdk:path: RandomQuoteStack/cognito_authorizer
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Modules: aws-cdk=1.41.0,@aws-cdk/assets=1.41.0,@aws-cdk/aws-apigateway=1.41.0,@aws-cdk/aws-cloudwatch=1.41.0,@aws-cdk/aws-cognito=1.41.0,@aws-cdk/aws-ec2=1.41.0,@aws-cdk/aws-events=1.41.0,@aws-cdk/aws-iam=1.41.0,@aws-cdk/aws-kms=1.41.0,@aws-cdk/aws-lambda=1.41.0,@aws-cdk/aws-logs=1.41.0,@aws-cdk/aws-s3=1.41.0,@aws-cdk/aws-s3-assets=1.41.0,@aws-cdk/aws-sqs=1.41.0,@aws-cdk/aws-ssm=1.41.0,@aws-cdk/cdk-assets-schema=1.41.0,@aws-cdk/cloud-assembly-schema=1.41.0,@aws-cdk/core=1.41.0,@aws-cdk/custom-resources=1.41.0,@aws-cdk/cx-api=1.41.0,@aws-cdk/region-info=1.41.0,jsii-runtime=node.js/v12.16.1
+    Condition: CDKMetadataAvailable
+Parameters:
+  AssetParametersb2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767S3Bucket33D8A8F8:
+    Type: String
+    Description: S3 bucket for asset "b2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767"
+  AssetParametersb2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767S3VersionKey9F1820B7:
+    Type: String
+    Description: S3 key for asset version "b2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767"
+  AssetParametersb2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767ArtifactHash29E682CB:
+    Type: String
+    Description: Artifact hash for asset "b2665d2a8d687d3739441746eb1ed1643b8e875425b0ce887ba4ad7322204767"
+Outputs:
+  randomQuoteApiEndpoint822CC906:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: randomQuoteApiA31FF805
+          - .execute-api.
+          - Ref: AWS::Region
+          - "."
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: randomQuoteApiDeploymentStageprod8C60D65A
+          - /
+Conditions:
+  CDKMetadataAvailable:
+    Fn::Or:
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ca-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-northwest-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-central-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-3
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - sa-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-2
+
