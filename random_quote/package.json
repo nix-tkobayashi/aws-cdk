@@ -24,7 +24,7 @@
     "@aws-cdk/aws-apigateway": "^1.204.0",
     "@aws-cdk/aws-cognito": "^1.204.0",
     "@aws-cdk/cdk": "^0.36.1",
-    "@aws-cdk/core": "1.41.0",
+    "@aws-cdk/core": "1.204.0",
     "source-map-support": "^0.5.16"
   }
 }
